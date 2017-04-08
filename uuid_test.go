@@ -37,7 +37,7 @@ func TestBytes(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
-	if NamespaceDNS.String() != "6ba7b810-9dad-11d1-80b4-00c04fd430c8" {
+	if NamespaceDNS.String() != "6ba7b8109dad11d180b400c04fd430c8" {
 		t.Errorf("Incorrect string representation for UUID: %s", NamespaceDNS.String())
 	}
 }
@@ -559,13 +559,13 @@ func TestNewV3(t *testing.T) {
 		t.Errorf("UUIDv3 generated with incorrect variant: %d", u.Variant())
 	}
 
-	if u.String() != "5df41881-3aed-3515-88a7-2f4a814cf09e" {
+	if u.String() != "5df418813aed351588a72f4a814cf09e" {
 		t.Errorf("UUIDv3 generated incorrectly: %s", u.String())
 	}
 
 	u = NewV3(NamespaceDNS, "python.org")
 
-	if u.String() != "6fa459ea-ee8a-3ca4-894e-db77e160355e" {
+	if u.String() != "6fa459eaee8a3ca4894edb77e160355e" {
 		t.Errorf("UUIDv3 generated incorrectly: %s", u.String())
 	}
 
@@ -611,7 +611,7 @@ func TestNewV5(t *testing.T) {
 
 	u = NewV5(NamespaceDNS, "python.org")
 
-	if u.String() != "886313e1-3b8a-5372-9b90-0c9aee199e5d" {
+	if u.String() != "886313e13b8a53729b900c9aee199e5d" {
 		t.Errorf("UUIDv5 generated incorrectly: %s", u.String())
 	}
 

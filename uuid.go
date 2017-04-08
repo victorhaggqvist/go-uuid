@@ -134,7 +134,7 @@ type NullUUID struct {
 	Valid bool
 }
 
-// The nil UUID is special form of UUID that is specified to have all
+// Nil UUID is special form of UUID that is specified to have all
 // 128 bits set to zero.
 var Nil = UUID{}
 
@@ -192,9 +192,17 @@ func (u UUID) Bytes() []byte {
 	return u[:]
 }
 
-// Returns canonical string representation of UUID:
-// xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
+// String returns canonical string representation of UUID:
+// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
 func (u UUID) String() string {
+	buf := make([]byte, 32)
+	hex.Encode(buf, u[:])
+	return string(buf)
+}
+
+// StringFormatted returns canonical string representation of UUID:
+// xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
+func (u UUID) StringFormatted() string {
 	buf := make([]byte, 36)
 
 	hex.Encode(buf[0:8], u[0:4])
@@ -223,7 +231,7 @@ func (u *UUID) SetVariant() {
 // MarshalText implements the encoding.TextMarshaler interface.
 // The encoding is the same as returned by String.
 func (u UUID) MarshalText() (text []byte, err error) {
-	text = []byte(u.String())
+	text = []byte(u.StringFormatted())
 	return
 }
 
