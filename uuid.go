@@ -231,7 +231,7 @@ func (u *UUID) SetVariant() {
 // MarshalText implements the encoding.TextMarshaler interface.
 // The encoding is the same as returned by String.
 func (u UUID) MarshalText() (text []byte, err error) {
-	text = []byte(u.StringFormatted())
+	text = []byte(u.String())
 	return
 }
 
@@ -240,10 +240,9 @@ func (u UUID) MarshalText() (text []byte, err error) {
 // "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
 // "{6ba7b810-9dad-11d1-80b4-00c04fd430c8}",
 // "urn:uuid:6ba7b810-9dad-11d1-80b4-00c04fd430c8"
-func (u *UUID) UnmarshalText(text []byte) (err error) {
+func (u *UUID) UnmarshalText(text []byte) error {
 	if len(text) < 32 {
-		err = fmt.Errorf("uuid: UUID string too short: %s", text)
-		return
+		return fmt.Errorf("uuid: UUID string too short: %s", text)
 	}
 
 	t := text[:]
@@ -258,36 +257,36 @@ func (u *UUID) UnmarshalText(text []byte) (err error) {
 
 	b := u[:]
 
+	dashCount := bytes.Count(t, []byte("-"))
+	if !(dashCount == 0 || dashCount == 4) {
+		return fmt.Errorf("uuid: invalid string format")
+	}
 	for i, byteGroup := range byteGroups {
 		if i > 0 {
-			if t[0] != '-' {
-				err = fmt.Errorf("uuid: invalid string format")
-				return
+			if t[0] == '-' {
+				t = t[1:]
 			}
-			t = t[1:]
 		}
 
 		if len(t) < byteGroup {
-			err = fmt.Errorf("uuid: UUID string too short: %s", text)
-			return
+			return fmt.Errorf("uuid: UUID string too short: %s", text)
 		}
 
 		if i == 4 && len(t) > byteGroup &&
 			((braced && t[byteGroup] != '}') || len(t[byteGroup:]) > 1 || !braced) {
-			err = fmt.Errorf("uuid: UUID string too long: %s", text)
-			return
+			return fmt.Errorf("uuid: UUID string too long: %s", text)
 		}
 
-		_, err = hex.Decode(b[:byteGroup/2], t[:byteGroup])
+		_, err := hex.Decode(b[:byteGroup/2], t[:byteGroup])
 		if err != nil {
-			return
+			return err
 		}
 
 		t = t[byteGroup:]
 		b = b[byteGroup/2:]
 	}
 
-	return
+	return nil
 }
 
 // MarshalBinary implements the encoding.BinaryMarshaler interface.
